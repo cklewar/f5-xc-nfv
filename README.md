@@ -38,12 +38,10 @@ Multiple components are used to spin up this end-to-end demo environment.
 - Workload: Used by Web, Generator and Helper EC2 instances
 - Service: Used by CE and NFV EC2 instances
 
-## Clone module repository
+## Clone repository
 
-- Clone this repo with: `git clone https://github.com/cklewar/f5-xc-aws-tgw--multinode`
+- Clone this repo with: `git clone --recurse-submodules https://github.com/cklewar/f5-xc-aws-tgw--multinode`
 - Enter repository directory with: `cd f5-xc-aws-tgw-multinode`
-- Clone __modules__ repository with: `git clone https://github.com/cklewar/f5-xc-modules`
-- Rename __modules__ repository directory name with: `mv f5-xc-modules modules`
 - Obtain F5XC API certificate file from Console and save it to `cert` directory
 
 ## Demo
