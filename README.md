@@ -65,7 +65,7 @@ One could demonstrate access to BigIP TMUI. In dashboard view find __Service Ins
 
 ![nfv_bigip_tmui_login_01](./docs/tmui_login_01.png)
 
-Credentials: admin/<password>
+Credentials: admin/password
 
 ### Helper Instance
 
