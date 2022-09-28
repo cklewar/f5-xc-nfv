@@ -25,7 +25,7 @@ output "aws_ec2_helper_instance_public_dns" {
 }
 
 module "bigip" {
-  source                         = "../modules/bigip"
+  source                         = "../modules_old/bigip"
   project_prefix                 = var.project_prefix
   project_suffix                 = var.project_suffix
   nfv_node_name                  = format("%s-%s-%s", var.project_prefix, var.nfv_node_name, var.project_suffix)

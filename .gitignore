@@ -110,9 +110,9 @@ Temporary Items
 # .idea/artifacts
 # .idea/compiler.xml
 # .idea/jarRepositories.xml
-# .idea/modules.xml
+# .idea/modules_old.xml
 # .idea/*.iml
-# .idea/modules
+# .idea/modules_old
 # *.iml
 # *.ipr
 
@@ -156,7 +156,7 @@ fabric.properties
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
 
 # *.iml
-# modules.xml
+# modules_old.xml
 # .idea/misc.xml
 # *.ipr
 

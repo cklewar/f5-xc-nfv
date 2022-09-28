@@ -79,7 +79,7 @@ Credentials: admin/password
 ````bash
 Error: error waiting for Load Balancer (RqxMfNfmu-outside) to be active: timeout while waiting for state to become 'active' (last state: 'provisioning', timeout: 10m0s)
 │ 
-│   on ../../../modules/views/ce-aws-lb/main.tf line 90, in resource "aws_lb" "elb-slo":
+│   on ../../../modules_old/views/ce-aws-lb/main.tf line 90, in resource "aws_lb" "elb-slo":
 │   90: resource "aws_lb" "elb-slo" {
 ````
 
