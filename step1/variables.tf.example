@@ -154,7 +154,7 @@ variable "nfv_description" {
 
 variable "nfv_domain_suffix" {
   type    = string
-  default = "acmecorp-prod.f5xc.app"
+  default = "adn.helloclouds.app"
 }
 
 variable "bigip_as3_rpm" {

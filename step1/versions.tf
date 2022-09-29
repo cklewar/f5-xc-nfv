@@ -13,9 +13,10 @@ terraform {
   }*/
 
   required_providers {
-    f5xc = {
+    volterra = {
       source  = "volterraedge/volterra"
       version = ">= 0.11.12"
+      configuration_aliases = [ volterra.alternate ]
     }
 
     aws = {
