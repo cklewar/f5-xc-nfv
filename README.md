@@ -79,7 +79,7 @@ Credentials: admin/password
 ````bash
 Error: error waiting for Load Balancer (RqxMfNfmu-outside) to be active: timeout while waiting for state to become 'active' (last state: 'provisioning', timeout: 10m0s)
 │ 
-│   on ../../../modules_old/views/ce-aws-lb/main.tf line 90, in resource "aws_lb" "elb-slo":
+│   on ../../../modules_old/views/ce-aws-lb/ck.tf line 90, in resource "aws_lb" "elb-slo":
 │   90: resource "aws_lb" "elb-slo" {
 ````
 
@@ -89,12 +89,12 @@ Error: error waiting for Load Balancer (RqxMfNfmu-outside) to be active: timeout
 ```bash
 Error: error reading EC2 Transit Gateway Route Table: multiple results found, try adjusting search criteria
 
-  on main.tf line 316, in data "aws_ec2_transit_gateway_route_table" "svcs_rt":
+  on ck.tf line 316, in data "aws_ec2_transit_gateway_route_table" "svcs_rt":
  316: data "aws_ec2_transit_gateway_route_table" "svcs_rt" {
 
 
 Error: error reading EC2 Transit Gateway Route Table: multiple results found, try adjusting search criteria
 
-  on main.tf line 329, in data "aws_ec2_transit_gateway_vpc_attachment" "svcs_vpc":
+  on ck.tf line 329, in data "aws_ec2_transit_gateway_vpc_attachment" "svcs_vpc":
  329: data "aws_ec2_transit_gateway_vpc_attachment" "svcs_vpc" {
 ```
