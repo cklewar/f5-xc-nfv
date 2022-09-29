@@ -1,13 +1,8 @@
-provider "aws" {
-  region = var.f5xc_aws_region
-  alias  = "us-east-2"
-}
-
 module "vpc_workload" {
   source             = "../modules/aws/vpc"
   aws_az_name        = var.f5xc_aws_az_name
   aws_region         = var.f5xc_aws_region
-  aws_vpc_cidr_block = "172.16.40.0/21"
+  aws_vpc_cidr_block = "172.16.184.0/21"
   aws_vpc_name       = format("%s-%s-%s", var.project_prefix, var.aws_vpc_workload_name, var.project_suffix)
   custom_tags        = {
     Name              = format("%s-aws-vpc-s-n-existing-sn-%s", var.project_prefix, var.project_suffix)
@@ -27,7 +22,7 @@ module "aws_subnet" {
     {
       name                    = format("%s-aws-subnet-private-%s", var.project_prefix, var.project_suffix)
       map_public_ip_on_launch = true
-      cidr_block              = "172.16.40.0/24"
+      cidr_block              = "172.16.184.0/24"
       availability_zone       = var.f5xc_aws_az_name
       custom_tags             = {
         Name  = format("%s-aws-subnet-private-%s", var.project_prefix, var.project_suffix)
@@ -37,7 +32,7 @@ module "aws_subnet" {
     {
       name                    = format("%s-aws-subnet-public-%s", var.project_prefix, var.project_suffix)
       map_public_ip_on_launch = true
-      cidr_block              = "172.16.41.0/24"
+      cidr_block              = "172.16.185.0/24"
       availability_zone       = var.f5xc_aws_az_name
       custom_tags             = {
         Name  = format("%s-aws-subnet-public-%s", var.project_prefix, var.project_suffix)
@@ -94,8 +89,8 @@ module "aws_tgw_wait_for_online" {
 }
 
 module "nfv" {
+  depends_on              = [module.aws_tgw_wait_for_online]
   source                  = "../modules/f5xc/nfv"
-  f5xc_api_p12_file       = var.f5xc_api_p12_file
   f5xc_api_token          = var.f5xc_api_token
   f5xc_api_url            = var.f5xc_api_url
   f5xc_namespace          = var.f5xc_namespace
@@ -115,14 +110,18 @@ module "nfv" {
     TTL   = -1
     Owner = var.owner_tag
   }
+  providers = {
+    aws      = aws.us-east-2
+    volterra = volterra.default
+  }
 }
 
 module "ec2_web" {
   source                        = "../modules/aws/ec2"
   aws_ec2_instance_name         = format("%s-%s-%s", var.project_prefix, var.aws_ec2_web_instance_name, var.project_suffix)
   aws_ec2_instance_type         = "t2.small"
-  aws_ec2_public_interface_ips  = ["172.16.192.10"]
-  aws_ec2_private_interface_ips = ["172.16.193.10"]
+  aws_ec2_public_interface_ips  = ["172.16.185.10"]
+  aws_ec2_private_interface_ips = ["172.16.184.10"]
   aws_ec2_instance_script       = {
     actions = [
       format("chmod +x /tmp/%s", var.aws_ec2_web_script_file_name),
@@ -165,8 +164,8 @@ module "generator" {
   source                        = "../modules/aws/ec2"
   aws_ec2_instance_name         = format("%s-%s-%s", var.project_prefix, var.aws_ec2_generator_instance_name, var.project_suffix)
   aws_ec2_instance_type         = "t2.small"
-  aws_ec2_public_interface_ips  = ["172.16.192.11"]
-  aws_ec2_private_interface_ips = ["172.16.193.11"]
+  aws_ec2_public_interface_ips  = ["172.16.185.11"]
+  aws_ec2_private_interface_ips = ["172.16.184.11"]
   aws_ec2_instance_script       = {
     actions = [
       format("chmod +x /tmp/%s", var.aws_ec2_generator_instance_script_file_name),
@@ -211,8 +210,8 @@ module "helper" {
   source                        = "../modules/aws/ec2"
   aws_ec2_instance_name         = format("%s-%s-%s", var.project_prefix, var.aws_ec2_helper_instance_name, var.project_suffix)
   aws_ec2_instance_type         = "t2.small"
-  aws_ec2_public_interface_ips  = ["172.16.192.12"]
-  aws_ec2_private_interface_ips = ["172.16.193.12"]
+  aws_ec2_public_interface_ips  = ["172.16.185.12"]
+  aws_ec2_private_interface_ips = ["172.16.184.12"]
   aws_vpc_id                    = module.vpc_workload.aws_vpc["id"]
   aws_ec2_instance_script       = {
     actions = [
