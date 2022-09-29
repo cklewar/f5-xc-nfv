@@ -106,6 +106,10 @@ jobs:
           TF_VAR_f5xc_tenant: ${{ secrets.f5xc_tenant }}
           TF_VAR_ssh_public_key_file: ${{ secrets.SSH_PUBLIC_KEY_FILE }}
           TF_VAR_ssh_private_key_file: ${{ secrets.SSH_PRIVATE_KEY_FILE }}
+          TF_VAR_gitea_version: ${{ secrets.GITEA_VERSION }}
+          TF_VAR_gitea_password: ${{ secrets.GITEA_PASSWORD }}
+          TF_VAR_nfv_admin_password: ${{ secrets.NFV_ADMIN_PASSWORD }}
+          TF_VAR_nfv_admin_username: ${{ secrets.NFV_ADMIN_USERNAME }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
           cd step1
@@ -171,6 +175,10 @@ jobs:
           TF_VAR_f5xc_api_token: ${{ secrets.f5xc_api_token }}
           TF_VAR_ssh_public_key_file: ${{ secrets.SSH_PUBLIC_KEY_FILE }}
           TF_VAR_ssh_private_key_file: ${{ secrets.SSH_PRIVATE_KEY_FILE }}
+          TF_VAR_gitea_version: ${{ secrets.GITEA_VERSION }}
+          TF_VAR_gitea_password: ${{ secrets.GITEA_PASSWORD }}
+          TF_VAR_nfv_admin_password: ${{ secrets.NFV_ADMIN_PASSWORD }}
+          TF_VAR_nfv_admin_username: ${{ secrets.NFV_ADMIN_USERNAME }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
           cd step1
@@ -236,6 +244,10 @@ jobs:
           TF_VAR_f5xc_api_token: ${{ secrets.f5xc_api_token }}
           TF_VAR_ssh_public_key_file: ${{ secrets.SSH_PUBLIC_KEY_FILE }}
           TF_VAR_ssh_private_key_file: ${{ secrets.SSH_PRIVATE_KEY_FILE }}
+          TF_VAR_gitea_version: ${{ secrets.GITEA_VERSION }}
+          TF_VAR_gitea_password: ${{ secrets.GITEA_PASSWORD }}
+          TF_VAR_nfv_admin_password: ${{ secrets.NFV_ADMIN_PASSWORD }}
+          TF_VAR_nfv_admin_username: ${{ secrets.NFV_ADMIN_USERNAME }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
           cd step1
