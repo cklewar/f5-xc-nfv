@@ -22,22 +22,18 @@ variable "custom_data_dir" {
 
 variable "f5xc_api_p12_file" {
   type    = string
-  default = "/Users/c.klewar/Projects/github.com/cklewar/volterra/cert/playground.staging.api-creds.p12"
 }
 
 variable "f5xc_api_url" {
   type    = string
-  default = "https://playground.staging.volterra.us/api"
 }
 
 variable "f5xc_api_token" {
   type    = string
-  default = "LhqZ7DZgLxNk3ib/DUydAc+8JPQ="
 }
 
 variable "f5xc_tenant" {
   type    = string
-  default = "playground-wtppvaog"
 }
 
 variable "f5xc_namespace" {
@@ -131,13 +127,11 @@ variable "aws_ec2_helper_instance_name" {
 variable "nfv_admin_username" {
   type        = string
   description = "NFV admin user name"
-  default     = "admin"
 }
 
 variable "nfv_admin_password" {
   type        = string
   description = "NFC admin user password"
-  default     = "Volterra123!"
 }
 
 variable "nfv_name" {
@@ -175,10 +169,16 @@ variable "bigip_as3_rpm_url" {
 
 variable "gitea_version" {
   type    = string
-  default = "1.17.2"
 }
 
 variable "gitea_password" {
   type    = string
-  default = "password123!"
+}
+
+variable "ssh_private_key_file" {
+  type    = string
+}
+
+variable "ssh_public_key_file" {
+  type    = string
 }
