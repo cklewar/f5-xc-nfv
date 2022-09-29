@@ -28,7 +28,7 @@ jobs:
       - name: Setup environment
         id: setup_env
         run: |
-          cp main.tf.example main.tf
+          cp step1/main.tf.example step1/main.tf
       - name: Setup Terraform
         id: setup_tf
         uses: hashicorp/setup-terraform@v2
@@ -74,7 +74,7 @@ jobs:
       - name: Setup environment
         id: setup_env
         run: |
-           cp main.tf.example main.tf
+           cp step1/main.tf.example step1/main.tf
       - name: Setup Terraform
         id: setup_tf
         uses: hashicorp/setup-terraform@v2
@@ -134,7 +134,7 @@ jobs:
       - name: Setup environment
         id: setup_env
         run: |
-          cp main.tf.example main.tf
+          cp step1/main.tf.example step1/main.tf
       - name: Setup Terraform
         id: setup_tf
         uses: hashicorp/setup-terraform@v2
@@ -194,7 +194,7 @@ jobs:
       - name: Setup environment
         id: setup_env
         run: |
-          cp main.tf.example main.tf
+          cp step1/main.tf.example step1/main.tf
       - name: Setup Terraform
         id: setup_tf
         uses: hashicorp/setup-terraform@v2
