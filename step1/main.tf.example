@@ -49,6 +49,33 @@ module "aws_subnet" {
   }
 }
 
+resource "aws_internet_gateway" "igw" {
+  provider = aws.us-east-2
+  vpc_id   = module.vpc_workload.aws_vpc["id"]
+  tags     = {
+    Owner = var.owner_tag
+  }
+}
+
+resource "aws_route_table" "rt" {
+  provider = aws.us-east-2
+  vpc_id   = module.vpc_workload.aws_vpc["id"]
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+  tags = {
+    Owner = var.owner_tag
+  }
+}
+
+resource "aws_route_table_association" "subnet" {
+  provider       = aws.us-east-2
+  for_each       = module.aws_subnet.aws_subnets
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.rt.id
+}
+
 module "tgw" {
   source                               = "../modules/f5xc/site/aws/tgw"
   f5xc_api_p12_file                    = var.f5xc_api_p12_file
