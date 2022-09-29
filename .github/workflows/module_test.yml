@@ -42,7 +42,9 @@ jobs:
         id: init
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
-        run: terraform init
+        run: |
+          cd step1
+          terraform init
       - name: Terraform Validate
         id: validate
         run: |
@@ -87,7 +89,9 @@ jobs:
         id: init
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
-        run: terraform init
+        run: |
+          cd step1
+          terraform init
       - name: Terraform Plan
         id: plan
         env:
@@ -149,7 +153,9 @@ jobs:
         id: init
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
-        run: terraform init
+        run: |
+          cd step1
+          terraform init
       - name: Terraform Apply
         id: apply
         env:
@@ -211,7 +217,9 @@ jobs:
         id: init
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
-        run: terraform init
+        run: |
+          cd step1
+          terraform init
       - name: Terraform Destroy
         id: destroy
         env:
