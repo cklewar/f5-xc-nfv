@@ -430,6 +430,7 @@ zsdoc/data
 ck.tfvars.json
 ck_gcp_creds.json
 ck.tf
+ck_variables.tf
 *.p12
 key*
 key.pub
