@@ -4,19 +4,14 @@ terraform {
     organization = "cklewar"
 
     workspaces {
-      name = "f5-xc-nfv-bigip-module"
+      name = "f5-xc-nfv-module"
     }
   }
-
-  /*backend "local" {
-    workspace_dir = "../state/step1"
-  }*/
 
   required_providers {
     volterra = {
       source  = "volterraedge/volterra"
       version = ">= 0.11.12"
-      configuration_aliases = [ volterra.alternate ]
     }
 
     aws = {
