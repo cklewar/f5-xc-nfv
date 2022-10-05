@@ -1,83 +1,5 @@
-module "vpc_workload" {
-  source             = "../modules/aws/vpc"
-  aws_az_name        = var.f5xc_aws_az_name
-  aws_region         = var.f5xc_aws_region
-  aws_vpc_cidr_block = "172.16.184.0/21"
-  aws_vpc_name       = format("%s-%s-%s", var.project_prefix, var.aws_vpc_workload_name, var.project_suffix)
-  custom_tags        = {
-    Name              = format("%s-aws-vpc-s-n-existing-sn-%s", var.project_prefix, var.project_suffix)
-    Owner             = var.owner_tag
-    ves-io-site-name  = format("%s-aws-vpc-s-n-existing-sn-%s", var.project_prefix, var.project_suffix)
-    ves-io-creator-id = var.owner_tag
-  }
-  providers = {
-    aws = aws.us-east-2
-  }
-}
-
-module "aws_subnet" {
-  source          = "../modules/aws/subnet"
-  aws_vpc_id      = module.vpc_workload.aws_vpc["id"]
-  aws_vpc_subnets = [
-    {
-      name                    = format("%s-aws-subnet-private-%s", var.project_prefix, var.project_suffix)
-      map_public_ip_on_launch = true
-      cidr_block              = "172.16.184.0/24"
-      availability_zone       = var.f5xc_aws_az_name
-      custom_tags             = {
-        Name  = format("%s-aws-subnet-private-%s", var.project_prefix, var.project_suffix)
-        Owner = var.owner_tag
-      }
-    },
-    {
-      name                    = format("%s-aws-subnet-public-%s", var.project_prefix, var.project_suffix)
-      map_public_ip_on_launch = true
-      cidr_block              = "172.16.185.0/24"
-      availability_zone       = var.f5xc_aws_az_name
-      custom_tags             = {
-        Name  = format("%s-aws-subnet-public-%s", var.project_prefix, var.project_suffix)
-        Owner = var.owner_tag
-      }
-    }
-  ]
-  custom_tags = {
-    Owner = var.owner_tag
-  }
-
-  providers = {
-    aws = aws.us-east-2
-  }
-}
-
-resource "aws_internet_gateway" "igw" {
-  provider = aws.us-east-2
-  vpc_id   = module.vpc_workload.aws_vpc["id"]
-  tags     = {
-    Owner = var.owner_tag
-  }
-}
-
-resource "aws_route_table" "rt" {
-  provider = aws.us-east-2
-  vpc_id   = module.vpc_workload.aws_vpc["id"]
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-  tags = {
-    Owner = var.owner_tag
-  }
-}
-
-resource "aws_route_table_association" "subnet" {
-  provider       = aws.us-east-2
-  for_each       = module.aws_subnet.aws_subnets
-  subnet_id      = each.value.id
-  route_table_id = aws_route_table.rt.id
-}
-
 module "tgw" {
-  source                               = "../modules/f5xc/site/aws/tgw"
+  source                               = "./modules/f5xc/site/aws/tgw"
   f5xc_api_p12_file                    = var.f5xc_api_p12_file
   f5xc_api_url                         = var.f5xc_api_url
   f5xc_namespace                       = var.f5xc_namespace
@@ -89,8 +11,6 @@ module "tgw" {
   f5xc_aws_tgw_name                    = local.f5xc_aws_tgw_name
   f5xc_aws_tgw_no_worker_nodes         = true
   f5xc_aws_tgw_primary_ipv4            = "192.168.168.0/21"
-  f5xc_aws_vpc_attachment_ids          = [module.vpc_workload.aws_vpc["id"]]
-  f5xc_aws_tgw_vpc_attach_label_deploy = local.f5xc_aws_tgw_name
   f5xc_aws_tgw_az_nodes                = {
     node0 : {
       f5xc_aws_tgw_workload_subnet = var.f5xc_aws_tgw_workload_subnet, f5xc_aws_tgw_inside_subnet = "192.168.168.64/26",
@@ -107,7 +27,7 @@ module "tgw" {
 
 module "aws_tgw_wait_for_online" {
   depends_on     = [module.tgw]
-  source         = "../modules/f5xc/status/site"
+  source         = "./modules/f5xc/status/site"
   f5xc_api_token = var.f5xc_api_token
   f5xc_api_url   = var.f5xc_api_url
   f5xc_namespace = var.f5xc_namespace
@@ -117,7 +37,7 @@ module "aws_tgw_wait_for_online" {
 
 module "nfv" {
   depends_on              = [module.aws_tgw_wait_for_online]
-  source                  = "../modules/f5xc/nfv"
+  source                  = "./modules/f5xc/nfv"
   f5xc_api_token          = var.f5xc_api_token
   f5xc_api_url            = var.f5xc_api_url
   f5xc_namespace          = var.f5xc_namespace
@@ -140,148 +60,5 @@ module "nfv" {
   providers = {
     aws      = aws.us-east-2
     volterra = volterra.default
-  }
-}
-
-module "ec2_web" {
-  source                        = "../modules/aws/ec2"
-  aws_ec2_instance_name         = format("%s-%s-%s", var.project_prefix, var.aws_ec2_web_instance_name, var.project_suffix)
-  aws_ec2_instance_type         = "t2.small"
-  aws_ec2_public_interface_ips  = ["172.16.185.10"]
-  aws_ec2_private_interface_ips = ["172.16.184.10"]
-  aws_ec2_instance_script       = {
-    actions = [
-      format("chmod +x /tmp/%s", var.aws_ec2_web_script_file_name),
-      format("sudo /tmp/%s", var.aws_ec2_web_script_file_name)
-    ]
-    template_data = {
-      PREFIX  = var.f5xc_aws_tgw_workload_subnet
-      GATEWAY = cidrhost(var.f5xc_aws_tgw_workload_subnet, 1)
-    }
-  }
-  aws_ec2_instance_script_template  = var.aws_ec2_web_script_template_file_name
-  aws_ec2_instance_script_file      = var.aws_ec2_web_script_file_name
-  aws_subnet_private_id             = module.aws_subnet.aws_subnets[format("%s-aws-subnet-private-%s", var.project_prefix, var.project_suffix)]["id"]
-  aws_subnet_public_id              = module.aws_subnet.aws_subnets[format("%s-aws-subnet-public-%s", var.project_prefix, var.project_suffix)]["id"]
-  aws_az_name                       = var.f5xc_aws_az_name
-  aws_region                        = var.f5xc_aws_region
-  aws_vpc_id                        = module.vpc_workload.aws_vpc["id"]
-  aws_ec2_instance_custom_data_dirs = [
-    {
-      name        = "instance_script"
-      source      = "${local.template_output_dir_path}/${var.aws_ec2_web_script_file_name}"
-      destination = format("/tmp/%s", var.aws_ec2_web_script_file_name)
-    }
-  ]
-  ssh_private_key_file     = var.ssh_private_key_file
-  ssh_public_key_file      = var.ssh_public_key_file
-  template_output_dir_path = local.template_output_dir_path
-  template_input_dir_path  = local.template_input_dir_path
-  custom_tags              = {
-    Name    = format("%s-%s-%s", var.project_prefix, var.aws_ec2_web_instance_name, var.project_suffix)
-    Version = "1"
-    Owner   = var.owner_tag
-  }
-  providers = {
-    aws = aws.us-east-2
-  }
-}
-
-module "generator" {
-  source                        = "../modules/aws/ec2"
-  aws_ec2_instance_name         = format("%s-%s-%s", var.project_prefix, var.aws_ec2_generator_instance_name, var.project_suffix)
-  aws_ec2_instance_type         = "t2.small"
-  aws_ec2_public_interface_ips  = ["172.16.185.11"]
-  aws_ec2_private_interface_ips = ["172.16.184.11"]
-  aws_ec2_instance_script       = {
-    actions = [
-      format("chmod +x /tmp/%s", var.aws_ec2_generator_instance_script_file_name),
-      format("sudo /tmp/%s", var.aws_ec2_generator_instance_script_file_name)
-    ]
-    template_data = {
-      PREFIX  = var.f5xc_aws_tgw_workload_subnet
-      GATEWAY = cidrhost(var.f5xc_aws_tgw_workload_subnet, 1)
-      HOST    = module.tgw.f5xc_aws_tgw["ce_master_public_ip"]
-      PORT    = 80
-    }
-  }
-  aws_ec2_instance_script_template  = var.aws_ec2_generator_script_template_file_name
-  aws_ec2_instance_script_file      = var.aws_ec2_generator_instance_script_file_name
-  aws_subnet_private_id             = module.aws_subnet.aws_subnets[format("%s-aws-subnet-private-%s", var.project_prefix, var.project_suffix)]["id"]
-  aws_subnet_public_id              = module.aws_subnet.aws_subnets[format("%s-aws-subnet-public-%s", var.project_prefix, var.project_suffix)]["id"]
-  aws_vpc_id                        = module.vpc_workload.aws_vpc["id"]
-  aws_az_name                       = var.f5xc_aws_az_name
-  aws_region                        = var.f5xc_aws_region
-  aws_ec2_instance_custom_data_dirs = [
-    {
-      name        = "instance_script"
-      source      = "${local.template_output_dir_path}/${var.aws_ec2_generator_instance_script_file_name}"
-      destination = format("/tmp/%s", var.aws_ec2_generator_instance_script_file_name)
-    }
-  ]
-  ssh_private_key_file     = var.ssh_private_key_file
-  ssh_public_key_file      = var.ssh_public_key_file
-  template_output_dir_path = local.template_output_dir_path
-  template_input_dir_path  = local.template_input_dir_path
-  custom_tags              = {
-    Name    = format("%s-%s-%s", var.project_prefix, var.aws_ec2_generator_instance_name, var.project_suffix)
-    Version = "1"
-    Owner   = var.owner_tag
-  }
-  providers = {
-    aws = aws.us-east-2
-  }
-}
-
-module "helper" {
-  source                        = "../modules/aws/ec2"
-  aws_ec2_instance_name         = format("%s-%s-%s", var.project_prefix, var.aws_ec2_helper_instance_name, var.project_suffix)
-  aws_ec2_instance_type         = "t2.small"
-  aws_ec2_public_interface_ips  = ["172.16.185.12"]
-  aws_ec2_private_interface_ips = ["172.16.184.12"]
-  aws_vpc_id                    = module.vpc_workload.aws_vpc["id"]
-  aws_ec2_instance_script       = {
-    actions = [
-      format("chmod +x /tmp/%s", var.aws_ec2_helper_instance_script_file_name),
-      format("sudo /tmp/%s %s %s %s", var.aws_ec2_helper_instance_script_file_name, module.nfv.aws_ec2_instance_nfv_internal_interface_ip, format("%s:%s", var.nfv_admin_username, var.nfv_admin_password), format("/tmp/%s", var.bigip_as3_rpm))
-    ]
-    template_data = {
-      CUSTOM_DATA_DIR   = var.custom_data_dir
-      PREFIX            = var.f5xc_aws_tgw_workload_subnet
-      GATEWAY           = cidrhost(var.f5xc_aws_tgw_workload_subnet, 1)
-      BIGIP_AS3_RPM_URL = var.bigip_as3_rpm_url
-      GITEA_VERSION     = var.gitea_version
-      GITEA_PASSWORD    = var.gitea_password
-    }
-  }
-  aws_ec2_instance_script_template  = var.aws_ec2_helper_instance_script_template_file_name
-  aws_ec2_instance_script_file      = var.aws_ec2_helper_instance_script_file_name
-  aws_subnet_private_id             = module.aws_subnet.aws_subnets[format("%s-aws-subnet-private-%s", var.project_prefix, var.project_suffix)]["id"]
-  aws_subnet_public_id              = module.aws_subnet.aws_subnets[format("%s-aws-subnet-public-%s", var.project_prefix, var.project_suffix)]["id"]
-  aws_az_name                       = var.f5xc_aws_az_name
-  aws_region                        = var.f5xc_aws_region
-  aws_ec2_instance_custom_data_dirs = [
-    {
-      name        = "instance_script"
-      source      = "${local.template_output_dir_path}/${var.aws_ec2_helper_instance_script_file_name}"
-      destination = format("/tmp/%s", var.aws_ec2_helper_instance_script_file_name)
-    },
-    {
-      name        = "additional_custom_data"
-      source      = abspath("${var.custom_data_dir}/")
-      destination = "/tmp"
-    }
-  ]
-  ssh_private_key_file     = var.ssh_private_key_file
-  ssh_public_key_file      = var.ssh_public_key_file
-  template_output_dir_path = local.template_output_dir_path
-  template_input_dir_path  = local.template_input_dir_path
-  custom_tags              = {
-    Name    = format("%s-%s-%s", var.project_prefix, var.aws_ec2_helper_instance_name, var.project_suffix)
-    Version = "1"
-    Owner   = var.owner_tag
-  }
-  providers = {
-    aws = aws.us-east-2
   }
 }

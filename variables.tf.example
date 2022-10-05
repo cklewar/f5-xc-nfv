@@ -7,17 +7,12 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "01"
+  default     = "03"
 }
 
 variable "owner_tag" {
   type    = string
   default = "c.klewar@f5.com"
-}
-
-variable "custom_data_dir" {
-  type    = string
-  default = "custom_data"
 }
 
 variable "f5xc_api_p12_file" {
@@ -84,61 +79,6 @@ variable "f5xc_aws_az_name" {
   default     = "us-east-2a"
 }
 
-variable "aws_vpc_workload_name" {
-  type        = string
-  description = "Name for workload vpc"
-  default     = "workload"
-}
-
-variable "aws_ec2_web_instance_name" {
-  type    = string
-  default = "web"
-}
-
-variable "aws_ec2_web_script_file_name" {
-  type    = string
-  default = "web.sh"
-}
-
-variable "aws_ec2_web_script_template_file_name" {
-  type    = string
-  default = "web.tftpl"
-}
-
-variable "aws_ec2_generator_script_template_file_name" {
-  type        = string
-  description = "EC2 instance userdata templatae file"
-  default     = "generator.tftpl"
-}
-
-variable "aws_ec2_generator_instance_script_file_name" {
-  type    = string
-  default = "generator.sh"
-}
-
-variable "aws_ec2_generator_instance_name" {
-  type        = string
-  description = "EC2 traffic generator instance name"
-  default     = "generator"
-}
-
-variable "aws_ec2_helper_instance_script_template_file_name" {
-  type        = string
-  description = "EC2 instance userdata templatae file"
-  default     = "helper.tftpl"
-}
-
-variable "aws_ec2_helper_instance_script_file_name" {
-  type    = string
-  default = "helper.sh"
-}
-
-variable "aws_ec2_helper_instance_name" {
-  type        = string
-  description = "EC2 traffic generator instance name"
-  default     = "helper"
-}
-
 variable "nfv_admin_username" {
   type        = string
   description = "NFV admin user name"
@@ -170,28 +110,6 @@ variable "nfv_description" {
 variable "nfv_domain_suffix" {
   type    = string
   default = "adn.helloclouds.app"
-}
-
-variable "bigip_as3_rpm" {
-  type    = string
-  default = "f5-appsvcs-3.37.0-4.noarch.rpm"
-}
-
-variable "bigip_as3_rpm_url" {
-  type    = string
-  default = "https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.37.0/f5-appsvcs-3.37.0-4.noarch.rpm"
-}
-
-variable "gitea_version" {
-  type    = string
-}
-
-variable "gitea_password" {
-  type    = string
-}
-
-variable "ssh_private_key_file" {
-  type    = string
 }
 
 variable "ssh_public_key_file" {
