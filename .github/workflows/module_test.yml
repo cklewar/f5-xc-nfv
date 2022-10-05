@@ -1,7 +1,7 @@
-name: F5XC NFV BigIP module
+name: F5XC NFV module
 on: push
 jobs:
-  f5-xc-nfv-bgip-module-validate:
+  f5-xc-nfv-module-validate:
     runs-on: ubuntu-latest
     steps:
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
@@ -44,16 +44,14 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
-          cd step1
           terraform init
       - name: Terraform Validate
         id: validate
         run: |
-          cd step1
           terraform validate -no-color
-  f5-xc-nfv-bgip-module-plan:
+  f5-xc-nfv-module-plan:
     runs-on: ubuntu-latest
-    needs: [ f5-xc-nfv-bgip-module-validate ]
+    needs: [ f5-xc-nfv-module-validate ]
     steps:
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub."
@@ -92,7 +90,6 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
-          cd step1
           terraform init
       - name: Terraform Plan
         id: plan
@@ -111,18 +108,17 @@ jobs:
           TF_VAR_nfv_admin_password: ${{ secrets.NFV_ADMIN_PASSWORD }}
           TF_VAR_nfv_admin_username: ${{ secrets.NFV_ADMIN_USERNAME }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
-        run: |
-          cd step1
+        run: | 
           terraform plan -no-color
         continue-on-error: false
       - name: Cleanup environment
         id: cleanup_env
         run: |
-          rm step1/main.tf
+          rm main.tf
       - run: echo "This job's status is ${{ job.status }}."
-  f5-xc-nfv-bgip-module-apply:
+  f5-xc-nfv-module-apply:
     runs-on: ubuntu-latest
-    needs: [ f5-xc-nfv-bgip-module-plan ]
+    needs: [ f5-xc-nfv-module-plan ]
     steps:
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub."
@@ -148,8 +144,8 @@ jobs:
       - name: Setup environment
         id: setup_env
         run: |
-          cp step1/variables.tf.example step1/variables.tf
-          cp step1/main.tf.example step1/main.tf
+          cp variables.tf.example variables.tf
+          cp main.tf.example main.tf
       - name: Setup Terraform
         id: setup_tf
         uses: hashicorp/setup-terraform@v2
@@ -161,7 +157,6 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
-          cd step1
           terraform init
       - name: Terraform Apply
         id: apply
@@ -181,17 +176,16 @@ jobs:
           TF_VAR_nfv_admin_username: ${{ secrets.NFV_ADMIN_USERNAME }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
-          cd step1
           terraform apply -auto-approve -no-color
         continue-on-error: false
       - name: Cleanup environment
         id: cleanup_env
         run: |
-          rm step1/main.tf
+          rm main.tf
       - run: echo "This job's status is ${{ job.status }}."
-  f5-xc-nfv-bgip-module-destroy:
+  f5-xc-nfv-module-destroy:
     runs-on: ubuntu-latest
-    needs: [ f5-xc-nfv-bgip-module-apply ]
+    needs: [ f5-xc-nfv-module-apply ]
     steps:
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "This job is now running on a ${{ runner.os }} server hosted by GitHub."
@@ -217,8 +211,8 @@ jobs:
       - name: Setup environment
         id: setup_env
         run: |
-          cp step1/variables.tf.example step1/variables.tf
-          cp step1/main.tf.example step1/main.tf
+          cp variables.tf.example variables.tf
+          cp main.tf.example main.tf
       - name: Setup Terraform
         id: setup_tf
         uses: hashicorp/setup-terraform@v2
@@ -230,7 +224,6 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
-          cd step1
           terraform init
       - name: Terraform Destroy
         id: destroy
@@ -250,11 +243,10 @@ jobs:
           TF_VAR_nfv_admin_username: ${{ secrets.NFV_ADMIN_USERNAME }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
         run: |
-          cd step1
           terraform destroy -auto-approve -no-color
         continue-on-error: false
       - name: Cleanup environment
         id: cleanup_env
         run: |
-          rm step1/main.tf
+          rm main.tf
       - run: echo "This job's status is ${{ job.status }}."
