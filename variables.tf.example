@@ -115,3 +115,12 @@ variable "nfv_domain_suffix" {
 variable "ssh_public_key_file" {
   type    = string
 }
+
+variable "custom_tags" {
+  Name                   = local.f5xc_aws_tgw_name
+  TTL                    = -1
+  Owner                  = "c.klewar@f5.com"
+  f5xc-tenant            = "playground-wtppvaog"
+  f5xc-feature           = "aws-tgw-nfv-bigip"
+  f5xc-ves-io-creator-id = "c.klewar@f5.com"
+}
