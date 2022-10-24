@@ -41,16 +41,6 @@ module "tgw" {
   public_ssh_key = file(var.ssh_public_key_file)
 }
 
-module "aws_tgw_wait_for_online" {
-  depends_on     = [module.tgw]
-  source         = "./modules/f5xc/status/site"
-  f5xc_api_token = var.f5xc_api_token
-  f5xc_api_url   = var.f5xc_api_url
-  f5xc_namespace = var.f5xc_namespace
-  f5xc_tenant    = var.f5xc_tenant
-  f5xc_site_name = local.f5xc_aws_tgw_name
-}
-
 module "nfv" {
   depends_on              = [module.aws_tgw_wait_for_online]
   source                  = "./modules/f5xc/nfv"
