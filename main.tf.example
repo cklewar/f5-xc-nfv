@@ -17,7 +17,7 @@ module "tgw" {
       f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26", f5xc_aws_tgw_az_name = var.f5xc_aws_az_name
     }
   }
-  custom_tags    = var.custom_tags
+  custom_tags    = local.custom_tags
   public_ssh_key = file(var.ssh_public_key_file)
   providers      = {
     aws      = aws.us-east-2
@@ -42,7 +42,7 @@ module "nfv" {
   f5xc_aws_az_name        = var.f5xc_aws_az_name
   f5xc_aws_region         = var.f5xc_aws_region
   public_ssh_key          = file(var.ssh_public_key_file)
-  custom_tags             = var.custom_tags
+  custom_tags             = local.custom_tags
   providers               = {
     aws      = aws.us-east-2
     volterra = volterra.default

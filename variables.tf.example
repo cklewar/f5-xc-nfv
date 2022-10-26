@@ -7,7 +7,7 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "03"
+  default     = "04"
 }
 
 variable "owner_tag" {
@@ -116,11 +116,12 @@ variable "ssh_public_key_file" {
   type    = string
 }
 
-variable "custom_tags" {
-  Name                   = local.f5xc_aws_tgw_name
-  TTL                    = -1
-  Owner                  = "c.klewar@f5.com"
-  f5xc-tenant            = "playground-wtppvaog"
-  f5xc-feature           = "aws-tgw-nfv-bigip"
-  f5xc-ves-io-creator-id = "c.klewar@f5.com"
+locals {
+  custom_tags = {
+    Owner                  = var.owner_tag
+    TTL                    = -1
+    f5xc-tenant            = var.f5xc_tenant
+    f5xc-feature           = "aws-tgw-nfv-bigip"
+    f5xc-ves-io-creator-id = var.owner_tag
+  }
 }
