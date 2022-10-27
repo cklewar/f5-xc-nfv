@@ -25,8 +25,14 @@ module "tgw" {
   }
 }
 
+module "apply_timeout_workaround" {
+  source         = "./modules/utils/timeout"
+  depend_on      = module.tgw.f5xc_aws_tgw
+  create_timeout = "5400s"
+}
+
 module "nfv" {
-  depends_on              = [module.tgw.f5xc_aws_tgw]
+  depends_on              = [module.apply_timeout_workaround]
   source                  = "./modules/f5xc/nfv"
   f5xc_api_token          = var.f5xc_api_token
   f5xc_api_url            = var.f5xc_api_url
