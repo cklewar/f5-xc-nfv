@@ -1,7 +1,8 @@
-output "nfv_virtual_server_ip" {
-  value = module.nfv.nfv["virtual_server_ip"]
-}
-
-output "aws_ec2_instance_nfv_internal_interface_ip" {
-  value = module.nfv.nfv["internal_interface_ip"]
+output "nfv" {
+  value = merge(module.nfv.nfv,
+    {
+      public_ip  = module.tgw.f5xc_aws_tgw["public_ip"],
+      public_dns = module.tgw.f5xc_aws_tgw["public_dns"]
+    }
+  )
 }
