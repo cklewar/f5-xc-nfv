@@ -34,7 +34,7 @@ module "tgw" {
     }
   }
   custom_tags    = local.custom_tags
-  public_ssh_key = file(var.ssh_public_key_file)
+  ssh_public_key = file(var.ssh_public_key_file)
   providers      = {
     aws      = aws.us-east-2
     volterra = volterra.default
@@ -42,7 +42,7 @@ module "tgw" {
 }
 
 module "nfv" {
-  depends_on              = [module.tgw.f5xc_aws_tgw]
+  depends_on              = [module.apply_timeout_workaround]
   source                  = "./modules/f5xc/nfv"
   f5xc_api_token          = var.f5xc_api_token
   f5xc_api_url            = var.f5xc_api_url
@@ -57,11 +57,20 @@ module "nfv" {
   f5xc_tgw_name           = local.f5xc_aws_tgw_name
   f5xc_aws_az_name        = var.f5xc_aws_az_name
   f5xc_aws_region         = var.f5xc_aws_region
-  public_ssh_key          = file(var.ssh_public_key_file)
+  ssh_public_key          = file(var.ssh_public_key_file)
   custom_tags             = local.custom_tags
   providers               = {
     aws      = aws.us-east-2
     volterra = volterra.default
   }
+}
+
+output "nfv" {
+  value = merge(module.nfv.nfv,
+    {
+      public_ip  = module.tgw.f5xc_aws_tgw["public_ip"],
+      public_dns = module.tgw.f5xc_aws_tgw["public_dns"]
+    }
+  )
 }
 ````
