@@ -119,9 +119,7 @@ variable "ssh_public_key_file" {
 locals {
   custom_tags = {
     Owner                  = var.owner_tag
-    TTL                    = -1
     f5xc-tenant            = var.f5xc_tenant
     f5xc-feature           = "aws-tgw-nfv-bigip"
-    f5xc-ves-io-creator-id = var.owner_tag
   }
 }
