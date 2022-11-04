@@ -1,6 +1,6 @@
 provider "aws" {
   region = var.f5xc_aws_region
-  alias  = "us-east-2"
+  alias  = "us-east-1"
 }
 
 provider "volterra" {
