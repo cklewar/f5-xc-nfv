@@ -1,4 +1,4 @@
-module "tgw" {
+/*module "tgw" {
   source                         = "./modules/f5xc/site/aws/tgw"
   f5xc_tenant                    = var.f5xc_tenant
   f5xc_api_url                   = var.f5xc_api_url
@@ -53,4 +53,4 @@ module "nfv" {
     aws      = aws.us-east-2
     volterra = volterra.default
   }
-}
+}*/
