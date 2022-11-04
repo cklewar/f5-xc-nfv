@@ -1,4 +1,4 @@
-/*module "tgw" {
+module "tgw" {
   source                         = "./modules/f5xc/site/aws/tgw"
   f5xc_tenant                    = var.f5xc_tenant
   f5xc_api_url                   = var.f5xc_api_url
@@ -28,7 +28,7 @@
 module "apply_timeout_workaround" {
   source         = "./modules/utils/timeout"
   depend_on      = module.tgw.f5xc_aws_tgw
-  create_timeout = "5400s"
+  create_timeout = "1800s"
 }
 
 module "nfv" {
@@ -53,4 +53,4 @@ module "nfv" {
     aws      = aws.us-east-2
     volterra = volterra.default
   }
-}*/
+}
