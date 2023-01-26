@@ -7,12 +7,12 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "01"
+  default     = "25"
 }
 
-variable "owner_tag" {
+variable "f5xc_aws_tgw_owner" {
   type    = string
-  default = "c.klewar@f5.com"
+  default = "c.klewar@ves.io"
 }
 
 variable "f5xc_api_p12_file" {
@@ -109,7 +109,7 @@ variable "nfv_description" {
 
 variable "nfv_domain_suffix" {
   type    = string
-  default = "adn.helloclouds.app"
+  default = "adn-prod.helloclouds.app"
 }
 
 variable "ssh_public_key_file" {
