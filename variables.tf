@@ -12,7 +12,7 @@ variable "project_suffix" {
 
 variable "f5xc_aws_tgw_owner" {
   type    = string
-  default = "c.klewar@f5.com"
+  default = "c.klewar@ves.io"
 }
 
 variable "f5xc_api_p12_file" {
