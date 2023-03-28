@@ -8,17 +8,17 @@ terraform {
       name = "f5-xc-nfv-module"
     }
   }
-  
+
   required_providers {
     volterra = {
-      source = "volterraedge/volterra"
+      source  = "volterraedge/volterra"
       version = "= 0.11.20"
     }
     aws = {
-      source = "hashicorp/aws"
-      version = ">= 4.32.0"
+      source  = "hashicorp/aws"
+      version = ">= 4.51.0"
     }
     local = ">= 2.2.3"
-    null = ">= 3.1.1"
+    null  = ">= 3.1.1"
   }
 }
