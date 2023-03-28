@@ -7,7 +7,7 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "25"
+  default     = "30"
 }
 
 variable "f5xc_aws_tgw_owner" {
@@ -110,6 +110,16 @@ variable "nfv_description" {
 variable "nfv_domain_suffix" {
   type    = string
   default = "adn-prod.helloclouds.app"
+}
+
+variable "f5xc_nfv_type_f5_big_ip_aws_service" {
+  type    = string
+  default = "f5_big_ip_aws_service"
+}
+
+variable "f5xc_nfv_type_palo_alto_fw_service" {
+  type    = string
+  default = "palo_alto_fw_service"
 }
 
 variable "ssh_public_key_file" {
