@@ -16,7 +16,7 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.32.0"
+      version = ">= 4.51.0"
     }
     local = ">= 2.2.3"
     null  = ">= 3.1.1"
