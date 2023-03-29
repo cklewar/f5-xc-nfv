@@ -7,7 +7,7 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "30"
+  default     = "01"
 }
 
 variable "f5xc_aws_tgw_owner" {
@@ -60,11 +60,6 @@ variable "f5xc_aws_tgw_name" {
   type        = string
   description = "AWS TGW name"
   default     = "tgw-nfv"
-}
-
-variable "f5xc_aws_tgw_workload_subnet" {
-  type    = string
-  default = "192.168.168.0/26"
 }
 
 variable "f5xc_aws_region" {
