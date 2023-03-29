@@ -58,7 +58,7 @@ variable "f5xc_aws_cred" {
 
 variable "f5xc_aws_tgw_name" {
   type        = string
-  description = "TGW name"
+  description = "AWS TGW name"
   default     = "tgw-nfv"
 }
 
