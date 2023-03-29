@@ -40,11 +40,11 @@ module "tgw" {
 module "apply_timeout_workaround" {
   source         = "./modules/utils/timeout"
   depend_on      = module.tgw.f5xc_aws_tgw
-  create_timeout = "600s"
+  create_timeout = "120s"
 }
 
 module "nfv" {
-  depends_on                   = [module.apply_timeout_workaround]
+  depends_on                   = [module.apply_timeout_workaround, module.tgw.f5xc_aws_tgw]
   source                       = "./modules/f5xc/nfv/aws"
   f5xc_tenant                  = var.f5xc_tenant
   f5xc_api_url                 = var.f5xc_api_url
