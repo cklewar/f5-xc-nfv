@@ -62,16 +62,16 @@ module "nfv" {
     namespace = module.tgw.f5xc_aws_tgw["namespace"]
   }
   f5xc_aws_nfv_nodes = {
-    node0 = {
+    "${var.project_prefix}-${var.nfv_name}-node1-${var.project_suffix}" = {
       aws_az_name          = var.f5xc_aws_az_name
       automatic_prefix     = true
-      reserved_mgmt_subnet = true
+      reserved_mgmt_subnet = false
     }
   }
-  f5xc_https_mgmt_disable_local = true
-  ssh_public_key                = file(var.ssh_public_key_file)
-  custom_tags                   = local.custom_tags
-  providers                     = {
+  f5xc_https_mgmt_advertise_on_internet_default_vip = true
+  ssh_public_key                                    = file(var.ssh_public_key_file)
+  custom_tags                                       = local.custom_tags
+  providers                                         = {
     aws      = aws.default
     volterra = volterra.default
   }
