@@ -40,28 +40,38 @@ module "tgw" {
 module "apply_timeout_workaround" {
   source         = "./modules/utils/timeout"
   depend_on      = module.tgw.f5xc_aws_tgw
-  create_timeout = "1800s"
+  create_timeout = "600s"
 }
 
 module "nfv" {
-  depends_on              = [module.apply_timeout_workaround]
-  source                  = "./modules/f5xc/nfv"
-  f5xc_api_token          = var.f5xc_api_token
-  f5xc_api_url            = var.f5xc_api_url
-  f5xc_namespace          = var.f5xc_namespace
-  f5xc_tenant             = var.f5xc_tenant
-  f5xc_nfv_admin_password = var.nfv_admin_password
-  f5xc_nfv_admin_username = var.nfv_admin_username
-  f5xc_nfv_domain_suffix  = var.nfv_domain_suffix
-  f5xc_nfv_description    = var.nfv_description
-  f5xc_nfv_node_name      = format("%s-%s-%s", var.project_prefix, var.nfv_node_name, var.project_suffix)
-  f5xc_nfv_name           = format("%s-%s-%s", var.project_prefix, var.nfv_name, var.project_suffix)
-  f5xc_tgw_name           = local.f5xc_aws_tgw_name
-  f5xc_aws_az_name        = var.f5xc_aws_az_name
-  f5xc_aws_region         = var.f5xc_aws_region
-  ssh_public_key          = file(var.ssh_public_key_file)
-  custom_tags             = local.custom_tags
-  providers               = {
+  depends_on                   = [module.apply_timeout_workaround]
+  source                       = "./modules/f5xc/nfv/aws"
+  f5xc_tenant                  = var.f5xc_tenant
+  f5xc_api_url                 = var.f5xc_api_url
+  f5xc_nfv_type                = var.f5xc_nfv_type_f5_big_ip_aws_service
+  f5xc_nfv_name                = format("%s-%s-%s", var.project_prefix, var.nfv_name, var.project_suffix)
+  f5xc_api_token               = var.f5xc_api_token
+  f5xc_namespace               = var.f5xc_namespace
+  f5xc_aws_az_name             = var.f5xc_aws_az_name
+  f5xc_nfv_domain_suffix       = var.nfv_domain_suffix
+  f5xc_nfv_admin_password      = var.nfv_admin_password
+  f5xc_nfv_admin_username      = var.nfv_admin_username
+  f5xc_nfv_aws_tgw_site_params = {
+    name      = module.tgw.f5xc_aws_tgw["site_name"]
+    tenant    = var.f5xc_tenant
+    namespace = module.tgw.f5xc_aws_tgw["namespace"]
+  }
+  f5xc_aws_nfv_nodes = {
+    node0 = {
+      aws_az_name          = var.f5xc_aws_az_name
+      automatic_prefix     = true
+      reserved_mgmt_subnet = true
+    }
+  }
+  f5xc_https_mgmt_disable_local = true
+  ssh_public_key                = file(var.ssh_public_key_file)
+  custom_tags                   = local.custom_tags
+  providers                     = {
     aws      = aws.default
     volterra = volterra.default
   }
