@@ -7,12 +7,12 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "30"
+  default     = "01"
 }
 
 variable "f5xc_aws_tgw_owner" {
   type    = string
-  default = "c.klewar@f5.com"
+  default = "c.klewar@ves.io"
 }
 
 variable "f5xc_api_p12_file" {
@@ -58,13 +58,8 @@ variable "f5xc_aws_cred" {
 
 variable "f5xc_aws_tgw_name" {
   type        = string
-  description = "TGW name"
+  description = "AWS TGW name"
   default     = "tgw-nfv"
-}
-
-variable "f5xc_aws_tgw_workload_subnet" {
-  type    = string
-  default = "192.168.168.0/26"
 }
 
 variable "f5xc_aws_region" {
@@ -95,18 +90,6 @@ variable "nfv_name" {
   default     = "bigip"
 }
 
-variable "nfv_node_name" {
-  type        = string
-  description = "NFV node name"
-  default     = "bigip"
-}
-
-variable "nfv_description" {
-  type        = string
-  description = "NFV description"
-  default     = ""
-}
-
 variable "nfv_domain_suffix" {
   type    = string
   default = "adn-prod.helloclouds.app"
@@ -124,11 +107,4 @@ variable "f5xc_nfv_type_palo_alto_fw_service" {
 
 variable "ssh_public_key_file" {
   type    = string
-}
-
-locals {
-  custom_tags = {
-    f5xc-tenant  = var.f5xc_tenant
-    f5xc-feature = "aws-tgw-nfv-bigip"
-  }
 }
