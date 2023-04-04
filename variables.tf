@@ -16,15 +16,15 @@ variable "f5xc_aws_tgw_owner" {
 }
 
 variable "f5xc_api_p12_file" {
-  type    = string
+  type = string
 }
 
 variable "f5xc_api_url" {
-  type    = string
+  type = string
 }
 
 variable "f5xc_api_token" {
-  type    = string
+  type = string
 }
 
 variable "f5xc_api_cert" {
@@ -43,7 +43,7 @@ variable "f5xc_api_ca_cert" {
 }
 
 variable "f5xc_tenant" {
-  type    = string
+  type = string
 }
 
 variable "f5xc_namespace" {
@@ -105,6 +105,18 @@ variable "f5xc_nfv_type_palo_alto_fw_service" {
   default = "palo_alto_fw_service"
 }
 
+variable "f5xc_pan_panorama_server" {
+  type = string
+}
+
+variable "f5xc_pan_panorama_device_group_name" {
+  type = string
+}
+
+variable "f5xc_pan_panorama_server_authorization_key" {
+  type = string
+}
+
 variable "ssh_public_key_file" {
-  type    = string
+  type = string
 }
