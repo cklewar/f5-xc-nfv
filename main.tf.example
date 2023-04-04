@@ -70,7 +70,7 @@ module "nfv" {
   }
   f5xc_https_mgmt_advertise_on_internet_default_vip = true
   ssh_public_key                                    = file(var.ssh_public_key_file)
-  custom_tags                                       = local.custom_tags
+  custom_tags                                       = local.custom_tags_bigip
   providers                                         = {
     aws      = aws.default
     volterra = volterra.default
