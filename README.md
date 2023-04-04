@@ -131,7 +131,7 @@ module "tgw" {
       f5xc_aws_tgw_az_name         = format("%sc", var.f5xc_aws_region)
     }
   }
-  custom_tags    = local.custom_tags_bigip
+  custom_tags    = local.custom_tags_pan
   ssh_public_key = file(var.ssh_public_key_file)
   providers      = {
     aws      = aws.default
