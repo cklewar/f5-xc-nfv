@@ -166,12 +166,12 @@ module "nfv" {
     namespace = module.tgw.f5xc_aws_tgw["namespace"]
   }
   f5xc_aws_nfv_nodes = {
-    "${var.project_prefix}-pan-n1-${var.project_suffix}" = {
+    "node1" = {
       aws_az_name          = format("%sa", var.f5xc_aws_region)
       automatic_prefix     = true
       reserved_mgmt_subnet = false
     },
-    "${var.project_prefix}-pan-n2-${var.project_suffix}" = {
+    "node2" = {
       aws_az_name          = format("%sb", var.f5xc_aws_region)
       automatic_prefix     = true
       reserved_mgmt_subnet = false
