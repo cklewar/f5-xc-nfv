@@ -187,4 +187,8 @@ module "nfv" {
     volterra = volterra.default
   }
 }
+
+output "pan_commands" {
+  value = module.nfv.nfv["pan_commands"]
+}
 ```
