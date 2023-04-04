@@ -12,7 +12,7 @@ This repository consists of Terraform templates to bring up a F5XC NFV environme
 - Initialize with: `terraform init`
 - Apply with: `terraform apply -auto-approve` or destroy with: `terraform destroy -auto-approve`
 
-## NFV module usage example
+## NFV BigIP single node module usage example
 
 ````hcl
 module "tgw" {
@@ -24,44 +24,61 @@ module "tgw" {
   f5xc_namespace                 = var.f5xc_namespace
   f5xc_aws_region                = var.f5xc_aws_region
   f5xc_aws_tgw_name              = local.f5xc_aws_tgw_name
+  f5xc_aws_tgw_owner             = var.f5xc_aws_tgw_owner
   f5xc_aws_tgw_primary_ipv4      = "192.168.168.0/21"
   f5xc_aws_tgw_no_worker_nodes   = true
   f5xc_aws_default_ce_sw_version = true
   f5xc_aws_default_ce_os_version = true
   f5xc_aws_tgw_az_nodes          = {
     node0 : {
-      f5xc_aws_tgw_workload_subnet = var.f5xc_aws_tgw_workload_subnet, f5xc_aws_tgw_inside_subnet = "192.168.168.64/26",
+      f5xc_aws_tgw_workload_subnet = "192.168.168.0/26", f5xc_aws_tgw_inside_subnet = "192.168.168.64/26",
       f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26", f5xc_aws_tgw_az_name = var.f5xc_aws_az_name
     }
   }
   custom_tags    = local.custom_tags
   ssh_public_key = file(var.ssh_public_key_file)
   providers      = {
-    aws      = aws.us-east-2
+    aws      = aws.default
     volterra = volterra.default
   }
 }
 
+module "apply_timeout_workaround" {
+  source         = "./modules/utils/timeout"
+  depend_on      = module.tgw.f5xc_aws_tgw
+  create_timeout = "120s"
+  delete_timeout = "180s"
+}
+
 module "nfv" {
-  depends_on              = [module.apply_timeout_workaround]
-  source                  = "./modules/f5xc/nfv"
-  f5xc_api_token          = var.f5xc_api_token
-  f5xc_api_url            = var.f5xc_api_url
-  f5xc_namespace          = var.f5xc_namespace
-  f5xc_tenant             = var.f5xc_tenant
-  f5xc_nfv_admin_password = var.nfv_admin_password
-  f5xc_nfv_admin_username = var.nfv_admin_username
-  f5xc_nfv_domain_suffix  = var.nfv_domain_suffix
-  f5xc_nfv_description    = var.nfv_description
-  f5xc_nfv_node_name      = format("%s-%s-%s", var.project_prefix, var.nfv_node_name, var.project_suffix)
-  f5xc_nfv_name           = format("%s-%s-%s", var.project_prefix, var.nfv_name, var.project_suffix)
-  f5xc_tgw_name           = local.f5xc_aws_tgw_name
-  f5xc_aws_az_name        = var.f5xc_aws_az_name
-  f5xc_aws_region         = var.f5xc_aws_region
-  ssh_public_key          = file(var.ssh_public_key_file)
-  custom_tags             = local.custom_tags
-  providers               = {
-    aws      = aws.us-east-2
+  depends_on                   = [module.apply_timeout_workaround, module.tgw.f5xc_aws_tgw]
+  source                       = "./modules/f5xc/nfv/aws"
+  f5xc_tenant                  = var.f5xc_tenant
+  f5xc_api_url                 = var.f5xc_api_url
+  f5xc_nfv_type                = var.f5xc_nfv_type_f5_big_ip_aws_service
+  f5xc_nfv_name                = format("%s-%s-%s", var.project_prefix, var.nfv_name, var.project_suffix)
+  f5xc_api_token               = var.f5xc_api_token
+  f5xc_namespace               = var.f5xc_namespace
+  f5xc_nfv_domain_suffix       = var.nfv_domain_suffix
+  f5xc_nfv_admin_password      = var.nfv_admin_password
+  f5xc_nfv_admin_username      = var.nfv_admin_username
+  f5xc_nfv_aws_tgw_site_params = {
+    name      = module.tgw.f5xc_aws_tgw["site_name"]
+    tenant    = var.f5xc_tenant
+    namespace = module.tgw.f5xc_aws_tgw["namespace"]
+  }
+  f5xc_aws_nfv_nodes = {
+    "${var.project_prefix}-${var.nfv_name}-node1-${var.project_suffix}" = {
+      aws_az_name          = var.f5xc_aws_az_name
+      automatic_prefix     = true
+      reserved_mgmt_subnet = false
+    }
+  }
+  f5xc_https_mgmt_advertise_on_internet_default_vip = true
+  ssh_public_key                                    = file(var.ssh_public_key_file)
+  custom_tags                                       = local.custom_tags
+  providers                                         = {
+    aws      = aws.default
     volterra = volterra.default
   }
 }
@@ -75,3 +92,86 @@ output "nfv" {
   )
 }
 ````
+
+## NFV Palo Alto cluster module usage example
+
+```hcl
+module "tgw" {
+  source                         = "./modules/f5xc/site/aws/tgw"
+  f5xc_tenant                    = var.f5xc_tenant
+  f5xc_api_url                   = var.f5xc_api_url
+  f5xc_aws_cred                  = var.f5xc_aws_cred
+  f5xc_api_token                 = var.f5xc_api_token
+  f5xc_namespace                 = var.f5xc_namespace
+  f5xc_aws_region                = var.f5xc_aws_region
+  f5xc_aws_tgw_name              = local.f5xc_aws_tgw_name
+  f5xc_aws_tgw_owner             = var.f5xc_aws_tgw_owner
+  f5xc_aws_tgw_primary_ipv4      = "192.168.168.0/21"
+  f5xc_aws_tgw_no_worker_nodes   = true
+  f5xc_aws_default_ce_sw_version = true
+  f5xc_aws_default_ce_os_version = true
+  f5xc_aws_tgw_az_nodes          = {
+    node0 : {
+      f5xc_aws_tgw_workload_subnet = "192.168.168.0/26", f5xc_aws_tgw_inside_subnet = "192.168.168.64/26",
+      f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26", f5xc_aws_tgw_az_name = var.f5xc_aws_az_name
+    }
+  }
+  custom_tags    = local.custom_tags
+  ssh_public_key = file(var.ssh_public_key_file)
+  providers      = {
+    aws      = aws.default
+    volterra = volterra.default
+  }
+}
+
+module "apply_timeout_workaround" {
+  source         = "./modules/utils/timeout"
+  depend_on      = module.tgw.f5xc_aws_tgw
+  create_timeout = "120s"
+  delete_timeout = "180s"
+}
+
+module "nfv" {
+  depends_on                   = [module.apply_timeout_workaround, module.tgw.f5xc_aws_tgw]
+  source                       = "./modules/f5xc/nfv/aws"
+  f5xc_tenant                  = var.f5xc_tenant
+  f5xc_api_url                 = var.f5xc_api_url
+  f5xc_nfv_type                = var.f5xc_nfv_type_palo_alto_fw_service
+  f5xc_nfv_name                = format("%s-%s-%s", var.project_prefix, "pan", var.project_suffix)
+  f5xc_api_token               = var.f5xc_api_token
+  f5xc_namespace               = var.f5xc_namespace
+  f5xc_pan_ami_bundle1         = true
+  f5xc_nfv_domain_suffix       = var.nfv_domain_suffix
+  f5xc_nfv_admin_password      = "" # disabled
+  f5xc_nfv_admin_username      = "" # disabled
+  f5xc_pan_panorama_server     = var.f5xc_pan_panorama_server
+  f5xc_nfv_aws_tgw_site_params = {
+    name      = module.tgw.f5xc_aws_tgw["site_name"]
+    tenant    = var.f5xc_tenant
+    namespace = module.tgw.f5xc_aws_tgw["namespace"]
+  }
+  f5xc_aws_nfv_nodes = {
+    "${var.project_prefix}-pan-n1-${var.project_suffix}" = {
+      aws_az_name          = "us-west-2a"
+      automatic_prefix     = true
+      reserved_mgmt_subnet = false
+    },
+    "${var.project_prefix}-pan-n2-${var.project_suffix}" = {
+      aws_az_name          = "us-west-2b"
+      automatic_prefix     = true
+      reserved_mgmt_subnet = false
+    }
+  }
+  f5xc_https_mgmt_do_not_advertise                  = true
+  f5xc_https_mgmt_default_https_port                = true
+  f5xc_pan_panorama_device_group_name               = var.f5xc_pan_panorama_device_group_name
+  f5xc_pan_panorama_server_authorization_key        = var.f5xc_pan_panorama_server_authorization_key
+  f5xc_https_mgmt_advertise_on_internet_default_vip = true
+  ssh_public_key                                    = file(var.ssh_public_key_file)
+  custom_tags                                       = local.custom_tags
+  providers                                         = {
+    aws      = aws.default
+    volterra = volterra.default
+  }
+}
+```
