@@ -110,13 +110,28 @@ module "tgw" {
   f5xc_aws_tgw_no_worker_nodes   = true
   f5xc_aws_default_ce_sw_version = true
   f5xc_aws_default_ce_os_version = true
+  f5xc_aws_vpc_attachment_ids    = []
   f5xc_aws_tgw_az_nodes          = {
     node0 : {
-      f5xc_aws_tgw_workload_subnet = "192.168.168.0/26", f5xc_aws_tgw_inside_subnet = "192.168.168.64/26",
-      f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26", f5xc_aws_tgw_az_name = var.f5xc_aws_az_name
+      f5xc_aws_tgw_workload_subnet = "192.168.168.0/26",
+      f5xc_aws_tgw_inside_subnet   = "192.168.168.64/26",
+      f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26",
+      f5xc_aws_tgw_az_name         = format("%sa", var.f5xc_aws_region)
+    },
+    node1 : {
+      f5xc_aws_tgw_workload_subnet = "192.168.169.0/26",
+      f5xc_aws_tgw_inside_subnet   = "192.168.169.64/26",
+      f5xc_aws_tgw_outside_subnet  = "192.168.169.128/26",
+      f5xc_aws_tgw_az_name         = format("%sb", var.f5xc_aws_region)
+    },
+    node2 : {
+      f5xc_aws_tgw_workload_subnet = "192.168.170.0/26",
+      f5xc_aws_tgw_inside_subnet   = "192.168.170.64/26",
+      f5xc_aws_tgw_outside_subnet  = "192.168.170.128/26",
+      f5xc_aws_tgw_az_name         = format("%sc", var.f5xc_aws_region)
     }
   }
-  custom_tags    = local.custom_tags
+  custom_tags    = local.custom_tags_bigip
   ssh_public_key = file(var.ssh_public_key_file)
   providers      = {
     aws      = aws.default
@@ -144,7 +159,7 @@ module "nfv" {
   f5xc_nfv_domain_suffix       = var.nfv_domain_suffix
   f5xc_nfv_admin_password      = "" # disabled
   f5xc_nfv_admin_username      = "" # disabled
-  f5xc_pan_panorama_server     = var.f5xc_pan_panorama_server
+  f5xc_pan_disable_panorama    = true
   f5xc_nfv_aws_tgw_site_params = {
     name      = module.tgw.f5xc_aws_tgw["site_name"]
     tenant    = var.f5xc_tenant
@@ -152,23 +167,21 @@ module "nfv" {
   }
   f5xc_aws_nfv_nodes = {
     "${var.project_prefix}-pan-n1-${var.project_suffix}" = {
-      aws_az_name          = "us-west-2a"
+      aws_az_name          = format("%sa", var.f5xc_aws_region)
       automatic_prefix     = true
       reserved_mgmt_subnet = false
     },
     "${var.project_prefix}-pan-n2-${var.project_suffix}" = {
-      aws_az_name          = "us-west-2b"
+      aws_az_name          = format("%sb", var.f5xc_aws_region)
       automatic_prefix     = true
       reserved_mgmt_subnet = false
     }
   }
   f5xc_https_mgmt_do_not_advertise                  = true
   f5xc_https_mgmt_default_https_port                = true
-  f5xc_pan_panorama_device_group_name               = var.f5xc_pan_panorama_device_group_name
-  f5xc_pan_panorama_server_authorization_key        = var.f5xc_pan_panorama_server_authorization_key
   f5xc_https_mgmt_advertise_on_internet_default_vip = true
   ssh_public_key                                    = file(var.ssh_public_key_file)
-  custom_tags                                       = local.custom_tags
+  custom_tags                                       = local.custom_tags_pan
   providers                                         = {
     aws      = aws.default
     volterra = volterra.default

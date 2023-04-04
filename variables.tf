@@ -7,7 +7,7 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "01"
+  default     = "12"
 }
 
 variable "f5xc_aws_tgw_owner" {
@@ -65,13 +65,13 @@ variable "f5xc_aws_tgw_name" {
 variable "f5xc_aws_region" {
   type        = string
   description = "AWS region name"
-  default     = "us-west-1"
+  default     = "us-west-2"
 }
 
 variable "f5xc_aws_az_name" {
   type        = string
   description = "AWS availability zone name"
-  default     = "us-west-1a"
+  default     = "a"
 }
 
 variable "nfv_admin_username" {
