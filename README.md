@@ -12,6 +12,21 @@ This repository consists of Terraform templates to bring up a F5XC NFV environme
 - Initialize with: `terraform init`
 - Apply with: `terraform apply -auto-approve` or destroy with: `terraform destroy -auto-approve`
 
+## Common module variables
+
+```hcl
+provider "aws" {
+  region = var.f5xc_aws_region
+  alias  = "default"
+}
+
+provider "volterra" {
+  api_p12_file = var.f5xc_api_p12_file
+  url          = var.f5xc_api_url
+  alias        = "default"
+}
+```
+
 ## NFV BigIP single node module usage example
 
 ````hcl
@@ -92,6 +107,94 @@ output "nfv" {
   )
 }
 ````
+
+## NFV BigIP cluster module usage example
+
+```hcl
+module "tgw" {
+  source                         = "./modules/f5xc/site/aws/tgw"
+  f5xc_tenant                    = var.f5xc_tenant
+  f5xc_api_url                   = var.f5xc_api_url
+  f5xc_aws_cred                  = var.f5xc_aws_cred
+  f5xc_api_token                 = var.f5xc_api_token
+  f5xc_namespace                 = var.f5xc_namespace
+  f5xc_aws_region                = var.f5xc_aws_region
+  f5xc_aws_tgw_name              = local.f5xc_aws_tgw_name
+  f5xc_aws_tgw_owner             = var.f5xc_aws_tgw_owner
+  f5xc_aws_tgw_primary_ipv4      = "192.168.168.0/21"
+  f5xc_aws_tgw_no_worker_nodes   = true
+  f5xc_aws_default_ce_sw_version = true
+  f5xc_aws_default_ce_os_version = true
+  f5xc_aws_vpc_attachment_ids    = []
+  f5xc_aws_tgw_az_nodes          = {
+    node0 : {
+      f5xc_aws_tgw_workload_subnet = "192.168.168.0/26",
+      f5xc_aws_tgw_inside_subnet   = "192.168.168.64/26",
+      f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26",
+      f5xc_aws_tgw_az_name         = format("%sa", var.f5xc_aws_region)
+    },
+    node1 : {
+      f5xc_aws_tgw_workload_subnet = "192.168.169.0/26",
+      f5xc_aws_tgw_inside_subnet   = "192.168.169.64/26",
+      f5xc_aws_tgw_outside_subnet  = "192.168.169.128/26",
+      f5xc_aws_tgw_az_name         = format("%sb", var.f5xc_aws_region)
+    },
+    node2 : {
+      f5xc_aws_tgw_workload_subnet = "192.168.170.0/26",
+      f5xc_aws_tgw_inside_subnet   = "192.168.170.64/26",
+      f5xc_aws_tgw_outside_subnet  = "192.168.170.128/26",
+      f5xc_aws_tgw_az_name         = format("%sc", var.f5xc_aws_region)
+    }
+  }
+  custom_tags    = local.custom_tags_bigip
+  ssh_public_key = file(var.ssh_public_key_file)
+  providers      = {
+    aws      = aws.default
+    volterra = volterra.default
+  }
+}
+
+module "nfv" {
+  depends_on                         = [module.apply_timeout_workaround, module.tgw.f5xc_aws_tgw]
+  source                             = "./modules/f5xc/nfv/aws"
+  f5xc_tenant                        = var.f5xc_tenant
+  f5xc_api_url                       = var.f5xc_api_url
+  f5xc_nfv_type                      = var.f5xc_nfv_type_f5_big_ip_aws_service
+  f5xc_nfv_name                      = format("%s-%s-%s", var.project_prefix, var.nfv_name, var.project_suffix)
+  f5xc_api_token                     = var.f5xc_api_token
+  f5xc_namespace                     = var.f5xc_namespace
+  f5xc_nfv_domain_suffix             = var.nfv_domain_suffix
+  f5xc_nfv_admin_password            = var.nfv_admin_password
+  f5xc_nfv_admin_username            = var.nfv_admin_username
+  f5xc_https_mgmt_do_not_advertise   = true
+  f5xc_https_mgmt_default_https_port = true
+  f5xc_nfv_aws_tgw_site_params       = {
+    name      = module.tgw.f5xc_aws_tgw["site_name"]
+    tenant    = var.f5xc_tenant
+    namespace = module.tgw.f5xc_aws_tgw["namespace"]
+  }
+  f5xc_aws_nfv_nodes = {
+    "node1" = {
+      aws_az_name          = format("%s%s", var.f5xc_aws_region, "a")
+      automatic_prefix     = true
+      reserved_mgmt_subnet = true
+    }
+    "node2" = {
+      aws_az_name          = format("%s%s", var.f5xc_aws_region, "b")
+      automatic_prefix     = true
+      reserved_mgmt_subnet = true
+    }
+  }
+  f5xc_https_mgmt_advertise_on_internet_default_vip = true
+  enable_f5xc_nfv_wait_for_online                   = true
+  ssh_public_key                                    = file(var.ssh_public_key_file)
+  custom_tags                                       = local.custom_tags_bigip
+  providers                                         = {
+    aws      = aws.default
+    volterra = volterra.default
+  }
+}
+```
 
 ## NFV Palo Alto cluster module usage example
 
