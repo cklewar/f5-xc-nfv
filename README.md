@@ -83,7 +83,7 @@ module "nfv" {
     namespace = module.tgw.f5xc_aws_tgw["namespace"]
   }
   f5xc_aws_nfv_nodes = {
-    "${var.project_prefix}-${var.nfv_name}-node1-${var.project_suffix}" = {
+    "${var.project_prefix}-${var.nfv_name}-node 1-${var.project_suffix}" = {
       aws_az_name          = var.f5xc_aws_az_name
       automatic_prefix     = true
       reserved_mgmt_subnet = false
