@@ -63,7 +63,7 @@ module "nfv" {
   }
   f5xc_aws_nfv_nodes = {
     "${var.project_prefix}-${var.nfv_name}-node1-${var.project_suffix}" = {
-      aws_az_name          = var.f5xc_aws_az_name
+      aws_az_name          = format("%s%s", var.f5xc_aws_region, "a")
       automatic_prefix     = true
       reserved_mgmt_subnet = false
     }
