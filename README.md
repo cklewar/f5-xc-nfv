@@ -90,6 +90,7 @@ module "nfv" {
     }
   }
   f5xc_https_mgmt_advertise_on_internet_default_vip = true
+  f5xc_enable_nfv_wait_for_online                   = true
   ssh_public_key                                    = file(var.ssh_public_key_file)
   custom_tags                                       = local.custom_tags
   providers                                         = {
@@ -186,7 +187,7 @@ module "nfv" {
     }
   }
   f5xc_https_mgmt_advertise_on_internet_default_vip = true
-  enable_f5xc_nfv_wait_for_online                   = true
+  f5xc_enable_nfv_wait_for_online                   = true
   ssh_public_key                                    = file(var.ssh_public_key_file)
   custom_tags                                       = local.custom_tags_bigip
   providers                                         = {
@@ -283,7 +284,7 @@ module "nfv" {
   f5xc_https_mgmt_do_not_advertise                  = true
   f5xc_https_mgmt_default_https_port                = true
   f5xc_https_mgmt_advertise_on_internet_default_vip = true
-  enable_f5xc_nfv_wait_for_online                   = true
+  f5xc_enable_nfv_wait_for_online                   = true
   ssh_public_key                                    = file(var.ssh_public_key_file)
   custom_tags                                       = local.custom_tags_pan
   providers                                         = {
