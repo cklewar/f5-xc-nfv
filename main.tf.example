@@ -26,7 +26,7 @@ module "tgw" {
   f5xc_aws_tgw_az_nodes          = {
     node0 : {
       f5xc_aws_tgw_workload_subnet = "192.168.168.0/26", f5xc_aws_tgw_inside_subnet = "192.168.168.64/26",
-      f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26", f5xc_aws_tgw_az_name = var.f5xc_aws_az_name
+      f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26", f5xc_aws_tgw_az_name = format("%s%s", var.f5xc_aws_region, "a")
     }
   }
   custom_tags    = local.custom_tags_bigip
