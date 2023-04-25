@@ -62,7 +62,7 @@ module "apply_timeout_workaround" {
   source         = "./modules/utils/timeout"
   depend_on      = module.tgw.f5xc_aws_tgw
   create_timeout = "120s"
-  delete_timeout = "180s"
+  delete_timeout = "300s"
 }
 
 module "nfv" {
@@ -153,6 +153,13 @@ module "tgw" {
     aws      = aws.default
     volterra = volterra.default
   }
+}
+
+module "apply_timeout_workaround" {
+  source         = "./modules/utils/timeout"
+  depend_on      = module.tgw.f5xc_aws_tgw
+  create_timeout = "120s"
+  delete_timeout = "300s"
 }
 
 module "nfv" {
@@ -247,7 +254,7 @@ module "apply_timeout_workaround" {
   source         = "./modules/utils/timeout"
   depend_on      = module.tgw.f5xc_aws_tgw
   create_timeout = "120s"
-  delete_timeout = "180s"
+  delete_timeout = "300s"
 }
 
 module "nfv" {
