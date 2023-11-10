@@ -25,7 +25,7 @@ module "tgw" {
   f5xc_aws_default_ce_sw_version = true
   f5xc_aws_default_ce_os_version = true
   f5xc_aws_tgw_az_nodes          = {
-    node0 : {
+    node0 = {
       f5xc_aws_tgw_workload_subnet = "192.168.168.0/26",
       f5xc_aws_tgw_inside_subnet   = "192.168.168.64/26",
       f5xc_aws_tgw_outside_subnet  = "192.168.168.128/26",
@@ -40,7 +40,11 @@ module "tgw" {
   }
 }
 
-module "apply_timeout_workaround" {
+output "nodes" {
+  value = length(module.tgw.f5xc_aws_tgw["nodes_counter"])
+}
+
+/*module "apply_timeout_workaround" {
   source         = "./modules/utils/timeout"
   depend_on      = module.tgw.f5xc_aws_tgw
   create_timeout = "120s"
@@ -78,4 +82,4 @@ module "nfv" {
     aws      = aws.default
     volterra = volterra.default
   }
-}
+}*/
