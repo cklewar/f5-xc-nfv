@@ -7,7 +7,7 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "12"
+  default     = "30"
 }
 
 variable "f5xc_aws_tgw_owner" {
@@ -106,15 +106,18 @@ variable "f5xc_nfv_type_palo_alto_fw_service" {
 }
 
 variable "f5xc_pan_panorama_server" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "f5xc_pan_panorama_device_group_name" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "f5xc_pan_panorama_server_authorization_key" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "ssh_public_key_file" {
