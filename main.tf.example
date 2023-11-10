@@ -40,10 +40,6 @@ module "tgw" {
   }
 }
 
-output "nodes" {
-  value = length(module.tgw.f5xc_aws_tgw["nodes_counter"])
-}
-
 /*module "apply_timeout_workaround" {
   source         = "./modules/utils/timeout"
   depend_on      = module.tgw.f5xc_aws_tgw
