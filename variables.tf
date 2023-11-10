@@ -7,7 +7,7 @@ variable "project_prefix" {
 variable "project_suffix" {
   type        = string
   description = "prefix string put at the end of string"
-  default     = "30"
+  default     = "300"
 }
 
 variable "f5xc_aws_tgw_owner" {
